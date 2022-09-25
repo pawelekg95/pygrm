@@ -10,6 +10,6 @@ jobs:
   Pylint:
     runs-on: self-hosted
     steps:
+      - uses: actions/checkout@v3
       - run: cd ${{ github.workspace }}
-      - run: ls
       - run: pylint ${{ inputs.module_name }}
