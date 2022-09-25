@@ -2,25 +2,25 @@ on: [push]
 
 jobs:
   Device_Pylint:
-    uses: pawelekg95/pygrm/.github/workflows/quality_template.yml@Pylint
+    uses: ./quality_template.yml
     with:
       module_name: app/device
     secrets: inherit
 
   Github_Pylint:
-    uses: pawelekg95/pygrm/.github/workflows/quality_template.yml@Pylint
+    uses: ./quality_template.yml@Pylint
     with:
       module_name: app/github
     secrets: inherit
 
   Terminal_Pylint:
-    uses: pawelekg95/pygrm/.github/workflows/quality_template.yml@Pylint
+    uses: ./quality_template.yml@Pylint
     with:
       module_name: app/terminal
     secrets: inherit
 
   Pygrm_Pylint:
-    uses: pawelekg95/pygrm/.github/workflows/quality_template.yml@Pylint
+    uses: ./quality_template.yml@Pylint
     with:
       module_name: app/pygrm.py
     secrets: inherit
