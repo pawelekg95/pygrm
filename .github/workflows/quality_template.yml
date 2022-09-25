@@ -11,4 +11,5 @@ jobs:
     runs-on: self-hosted
     steps:
       - run: cd ${{ github.workspace }}
+      - run: ls
       - run: pylint ${{ inputs.module_name }}
