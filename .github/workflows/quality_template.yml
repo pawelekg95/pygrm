@@ -14,4 +14,4 @@ jobs:
         with:
           module_name: ${{ inputs.module_name }}
       - run: cd ${{ github.workspace }}
-      - run: pylint ${{ module_name }}
+      - run: pylint ${{ inputs.module_name }}
