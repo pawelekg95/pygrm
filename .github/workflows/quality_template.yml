@@ -10,8 +10,5 @@ jobs:
   Pylint:
     runs-on: self-hosted
     steps:
-      - uses: octo-org/my-action@v1
-        with:
-          module_name: ${{ inputs.module_name }}
       - run: cd ${{ github.workspace }}
       - run: pylint ${{ inputs.module_name }}
