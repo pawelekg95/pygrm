@@ -1,0 +1,17 @@
+name: Code quality template
+on:
+  workflow_call:
+    inputs:
+      module_name:
+        required: true
+        type: string
+
+jobs:
+  Pylint:
+    runs-on: self-hosted
+    steps:
+      - uses: octo-org/my-action@v1
+        with:
+          module_name: ${{ inputs.module_name }}
+      - run: cd ${{ github.workspace }}
+      - run: pylint ${{ module_name }}

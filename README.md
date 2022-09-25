@@ -1,2 +1,2 @@
 # py-grm
-Utility to manage github runners on remote hosts
+Utility to manage github runners on local / remote hosts
