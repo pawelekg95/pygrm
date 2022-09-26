@@ -25,3 +25,9 @@ jobs:
       module_name: app/pygrm.py
     secrets: inherit
 
+  Error_Pylint:
+    uses: ./.github/workflows/quality_template.yml
+    with:
+      module_name: app/error.py
+    secrets: inherit
+
