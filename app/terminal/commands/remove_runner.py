@@ -1,7 +1,10 @@
-from typing import List
-from github.client import Client as GithubClient
-from error import Error
+""" Remove runner command module """
+from app.error.error import Error
 
 
-def perform(github_client: GithubClient = None, repositories: List[str] = None) -> Error:
+def perform(*_) -> Error:
+    """
+    :param _:
+    :return:
+    """
     return Error.OK

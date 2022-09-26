@@ -1,9 +1,17 @@
+""" List runner command module """
 from typing import List
-from github.client import Client as GithubClient
-from error import Error
+from app.github.client import Client as GithubClient
+from app.error.error import Error
 
 
-def perform(github_client: GithubClient = None, repositories: List[str] = None) -> Error:
+def perform(github_client: GithubClient = None,
+            repositories: List[str] = None) -> Error:
+    """
+    Lists runners
+    :param github_client:
+    :param repositories:
+    :return:
+    """
     if not repositories:
         print('No repositories')
     repo_name = input('For what repository? ')
@@ -17,8 +25,10 @@ def perform(github_client: GithubClient = None, repositories: List[str] = None) 
     if not runners:
         print('No runners registered for project')
     for runner in runners:
-        print('Name:', runner.name, ', system:', runner.system, ', architecture:' , runner.arch, ', online:',
-              runner.online, ', repository:', runner.repository, ', runs as docker service:', runner.as_docker,
+        print('Name:', runner.name, ', system:', runner.system,
+              ', architecture:', runner.arch, ', online:',
+              runner.online, ', repository:', runner.repository,
+              ', runs as docker service:', runner.as_docker,
               ', docker enabled:', runner.docker_enabled, ', container id:',
               runner.docker_container_id if runner.as_docker else 'None')
     return Error.OK

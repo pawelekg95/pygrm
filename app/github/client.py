@@ -1,17 +1,26 @@
-import requests
+"""
+Github client module.
+"""
 import json
 from typing import List, Tuple
+import requests
 
-from .data.repository import Repository
-from .data.runner import Runner
-from error import Error
+from app.github.data.repository import Repository
+from app.github.data.runner import Runner
+from app.error.error import Error
 
 
 ARCHS_LABELS = ['X64', 'ARM64', 'ARM']
 SERVICE_LABELS = ['docker_service', 'shell_service']
 
 
-def _parse_repositories(repository_json: str = '') -> Tuple[Error, List[Repository]]:
+def _parse_repositories(repository_json: str = '')\
+        -> Tuple[Error, List[Repository]]:
+    """
+    Parses response from github api repositories request
+    :param repository_json:
+    :return:
+    """
     try:
         parsed_json = json.loads(repository_json)
     except json.JSONDecodeError:
@@ -25,7 +34,14 @@ def _parse_repositories(repository_json: str = '') -> Tuple[Error, List[Reposito
     return Error.OK, token
 
 
-def _parse_runners(runners_json: str = '', repository: str = '') -> Tuple[Error, List[Runner]]:
+def _parse_runners(runners_json: str = '', repository: str = '')\
+        -> Tuple[Error, List[Runner]]:
+    """
+    Parses response from github api runners request
+    :param runners_json:
+    :param repository:
+    :return:
+    """
     try:
         parsed_json = json.loads(runners_json)
     except json.JSONDecodeError:
@@ -51,7 +67,13 @@ def _parse_runners(runners_json: str = '', repository: str = '') -> Tuple[Error,
     return Error.OK, token
 
 
-def _parse_token(token_json: str = '') -> Tuple[Error, str]:
+def _parse_token(token_json: str = '')\
+        -> Tuple[Error, str]:
+    """
+    Parses github api token request
+    :param token_json:
+    :return:
+    """
     try:
         parsed_json = json.loads(token_json)
     except json.JSONDecodeError:
@@ -60,7 +82,15 @@ def _parse_token(token_json: str = '') -> Tuple[Error, str]:
 
 
 class Client:
+    """
+    Github api client.
+    """
     def __init__(self, user: str = '', auth_token: str = ''):
+        """
+        Constructor
+        :param user:
+        :param auth_token:
+        """
         self.base_url = 'https://api.github.com'
         self.user = user
         self.auth_token = auth_token
@@ -69,24 +99,48 @@ class Client:
         self.content_header = {'Content-type': 'application/json'}
 
     def get_repositories(self) -> Tuple[Error, List[Repository]]:
+        """
+        Get user repositories
+        :return:
+        """
         repository_request = requests.get(self.base_url + '/user/repos',
-                                          headers={**self.json_header, **self.auth_header, **self.content_header})
+                                          headers={**self.json_header,
+                                                   **self.auth_header,
+                                                   **self.content_header})
         if repository_request.status_code != 200:
             return Error.HTTP_ERROR, []
         return _parse_repositories(repository_request.text)
 
     def get_runners(self, repository: str = '') -> Tuple[Error, List[Runner]]:
+        """
+        Get self-hosted runners for repository
+        :param repository:
+        :return:
+        """
         if not repository:
             return Error.EMPTY, []
-        runners_request = requests.get(self.base_url + '/repos/' + self.user + '/' + repository + '/actions/runners',
-                                       headers={**self.json_header, **self.auth_header, **self.content_header})
+        runners_request = requests.get(self.base_url + '/repos/' +
+                                       self.user + '/' + repository +
+                                       '/actions/runners',
+                                       headers={**self.json_header,
+                                                **self.auth_header,
+                                                **self.content_header})
         if runners_request.status_code != 200:
             return Error.HTTP_ERROR, []
         return _parse_runners(runners_request.text, repository)
 
     def registration_token(self, repository: str = '') -> Tuple[Error, str]:
-        token_request = requests.post(self.base_url + '/repos/' + self.user + '/' + repository + '/actions/runners/registration-token',
-                                      headers={**self.json_header, **self.auth_header, **self.content_header})
+        """
+        Get self-hosted github runner registration token
+        :param repository:
+        :return:
+        """
+        token_request = requests.post(self.base_url + '/repos/' +
+                                      self.user + '/' + repository +
+                                      '/actions/runners/registration-token',
+                                      headers={**self.json_header,
+                                               **self.auth_header,
+                                               **self.content_header})
         if token_request.status_code != 201:
             return Error.HTTP_ERROR, ''
         return _parse_token(token_request.text)

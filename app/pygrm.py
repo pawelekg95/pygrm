@@ -2,11 +2,15 @@
 """ PyGrm utility to easily manage github self-hosted runners """
 
 import argparse
-import sys
 from typing import List
+import sys
+import os
 
-from github.client import Client as GithubClient
-from terminal.interface import Interface
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.dirname(SCRIPT_DIR))
+
+from app.github.client import Client as GithubClient  # pylint: disable=wrong-import-position
+from app.terminal.interface import Interface  # pylint: disable=wrong-import-position
 
 
 def parse_arguments(argv: List[str] = None):

@@ -1,18 +1,26 @@
+""" Install runner command module """
 from getpass import getpass
 from typing import List
-from github.client import Client as GithubClient
-from error import Error
-from .strategies.install_shell_strategy import ShellStrategy
-from .strategies.install_docker_strategy import DockerStrategy
-from device.local import LocalClient
-from device.remote import RemoteClient
+from app.github.client import Client as GithubClient
+from app.error.error import Error
+from app.device.local import LocalClient
+from app.device.remote import RemoteClient
+from app.terminal.commands.strategies.install_shell_strategy import ShellStrategy
+from app.terminal.commands.strategies.install_docker_strategy import DockerStrategy
 
 
 DESTINATION = ['local', 'remote']
 TYPE = ['shell', 'docker']
 
 
-def perform(github_client: GithubClient = None, repositories: List[str] = None) -> Error:
+def perform(github_client: GithubClient = None,  # pylint: disable=too-many-return-statements
+            repositories: List[str] = None) -> Error:
+    """
+    Installs new runner
+    :param github_client:
+    :param repositories:
+    :return:
+    """
     if not repositories:
         print('No repositories')
     repo_name = input('For what repository? ')
@@ -25,9 +33,11 @@ def perform(github_client: GithubClient = None, repositories: List[str] = None) 
         print('Failed to get runners')
         return error_code
     if repo_name + '_' + runner_name in [x.name for x in runners]:
-        print('Runner with such name already exists. Run "runners" command to list already registered runner')
+        print('Runner with such name already exists.'
+              'Run "runners" command to list already registered runner')
         return Error.VALUE_ERROR
-    destination = input('Install runner locally on remote host? [local / remote] ')
+    destination =\
+        input('Install runner locally on remote host? [local / remote] ')
     if destination not in DESTINATION:
         print('Wrong option')
         return Error.VALUE_ERROR
@@ -46,11 +56,12 @@ def perform(github_client: GithubClient = None, repositories: List[str] = None) 
     error_code = install_strategy.install(repo_name, runner_name)
     if error_code != Error.OK:
         return error_code
-    launch = input('Runner installed correctly. Do you want to launch it immediately? [yes / no] ')
+    launch = input('Runner installed correctly.'
+                   'Do you want to launch it immediately? [yes / no] ')
     if launch not in ['yes', 'no']:
         return Error.VALUE_ERROR
     if launch == 'no':
         return Error.OK
-    return device_manager.start_container(repo_name + '_' + runner_name)[0] if runner_type == 'docker' else \
-        device_manager.start_github_service(repo_name + '_' + runner_name)[0]
-
+    return device_manager.start_container(repo_name + '_' + runner_name)[0]\
+        if runner_type == 'docker'\
+        else device_manager.start_github_service(repo_name + '_' + runner_name)[0]

@@ -85,7 +85,7 @@ RUN apt-get update && \
     if (( ${#PACKAGES[@]} != 0 )); then apt-get install "${PACKAGES[@]}"; fi
 
 # Install base python packages
-RUN pip3 install requests telnetlib3 pyserial pylint xmlrunner pandas scipy numpy
+RUN pip3 install requests telnetlib3 pyserial pylint xmlrunner pandas scipy numpy pdoc3
 
 # Install additional python packages
 RUN IFS=',' read -ra PACKAGES <<< "${ADDITIONAL_PYTHON_PACKAGES}" && \

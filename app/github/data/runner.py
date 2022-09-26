@@ -1,5 +1,13 @@
-class Runner:
-    def __init__(self,
+"""
+Runner module
+"""
+
+
+class Runner:  # pylint: disable=too-few-public-methods,too-many-instance-attributes
+    """
+    Runner class
+    """
+    def __init__(self,  # pylint: disable=too-many-arguments
                  name: str = '',
                  repository: str = '',
                  system: str = '',
@@ -8,6 +16,17 @@ class Runner:
                  as_docker: bool = False,
                  docker_enabled: bool = False,
                  docker_container_id: str = ''):
+        """
+        Constructor
+        :param name:
+        :param repository:
+        :param system:
+        :param arch:
+        :param online:
+        :param as_docker:
+        :param docker_enabled:
+        :param docker_container_id:
+        """
         self.name = name
         self.repository = repository
         self.system = system
