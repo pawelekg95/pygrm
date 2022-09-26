@@ -28,6 +28,6 @@ jobs:
   Error_Pylint:
     uses: ./.github/workflows/quality_template.yml
     with:
-      module_name: app/error.py
+      module_name: app/error/error.py
     secrets: inherit
 
