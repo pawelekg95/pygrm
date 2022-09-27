@@ -1,0 +1,45 @@
+on: [push]
+
+jobs:
+  Device_Pylint:
+    uses: ./.github/workflows/quality_template.yml
+    with:
+      module_name: app/device
+      linter: pylint
+    secrets: inherit
+
+  Github_Pylint:
+    uses: ./.github/workflows/quality_template.yml
+    with:
+      module_name: app/github
+      linter: pylint
+    secrets: inherit
+
+  Terminal_Pylint:
+    uses: ./.github/workflows/quality_template.yml
+    with:
+      module_name: app/terminal
+      linter: pylint
+    secrets: inherit
+
+  Pygrm_Pylint:
+    uses: ./.github/workflows/quality_template.yml
+    with:
+      module_name: app/pygrm.py
+      linter: pylint
+    secrets: inherit
+
+  Error_Pylint:
+    uses: ./.github/workflows/quality_template.yml
+    with:
+      module_name: app/error/error.py
+      linter: pylint
+    secrets: inherit
+
+  Document_Generator_Shellcheck:
+    uses: ./.github/workflows/quality_template.yml
+    with:
+      module_name: utils/generate_documentation.sh
+      linter: shellcheck
+    secrets: inherit
+
