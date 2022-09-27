@@ -1,4 +1,6 @@
 """
+Copyright (c) 2022 Pawel Gmurczyk
+
 Runner module
 """
 

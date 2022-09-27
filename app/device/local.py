@@ -1,4 +1,8 @@
-""" Module that provides abstraction layer for local device """
+"""
+Copyright (c) 2022 Pawel Gmurczyk
+
+Module that provides abstraction layer for local device
+"""
 from typing import Tuple
 from app.error.error import Error
 

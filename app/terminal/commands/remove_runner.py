@@ -1,10 +1,20 @@
-""" Remove runner command module """
+"""
+Copyright (c) 2022 Pawel Gmurczyk
+
+Remove runner command module
+"""
 from app.error.error import Error
+from app.terminal.commands.icommand import ICommand
 
 
-def perform(*_) -> Error:
+class RemoveCommand(ICommand):
     """
-    :param _:
-    :return:
+    Remove runner command
     """
-    return Error.OK
+    @classmethod
+    def perform(cls, *_) -> Error:
+        """
+        :param _:
+        :return:
+        """
+        return Error.OK

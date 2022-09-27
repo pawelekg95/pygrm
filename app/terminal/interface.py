@@ -1,4 +1,8 @@
-""" Command line interface module """
+"""
+Copyright (c) 2022 Pawel Gmurczyk
+
+Command line interface module
+"""
 from typing import Callable, List
 from app.error.error import Error, message
 from app.github.client import Client as GithubClient
@@ -30,13 +34,14 @@ class Interface:
         if error_code != Error.OK:
             raise ConnectionError
         self.option_mapping = {
-            'install': Command('Install new GitHub runner', install_runner.perform),
-            'remove':  Command('Remove GitHub runner', remove_runner.perform),
-            'stop': Command('Stop GitHub runner', stop_runner.perform),
-            'start': Command('Start GitHub runner', start_runner.perform),
+            'install': Command('Install new GitHub runner',
+                               install_runner.InstallCommand().perform),
+            'remove':  Command('Remove GitHub runner', remove_runner.RemoveCommand().perform),
+            'stop': Command('Stop GitHub runner', stop_runner.StopCommand().perform),
+            'start': Command('Start GitHub runner', start_runner.StartCommand().perform),
             'exit': Command('Quit PyGrm', self.stop),
             'help': Command('Print help', self.print_description),
-            'runners': Command('List all runners', list_runners.perform),
+            'runners': Command('List all runners', list_runners.ListCommand().perform),
             'repositories': Command('List repositories', self.list_repositories)
         }
 

@@ -28,7 +28,7 @@ RUN echo APT::Install-Recommends "false"; >> /etc/apt/apt.conf && \
 \
     apt-get update && \
     apt-get install -y build-essential g++ llvm python3 python3-pip shellcheck git make clang-format clang-tidy wget \
-    xz-utils valgrind lcov libgpgme-dev ca-certificates curl gnupg lsb-release dpkg
+    xz-utils valgrind lcov libgpgme-dev ca-certificates curl gnupg lsb-release dpkg diffutils
 
 # Install custom CMake version
 RUN echo APT::Install-Recommends "false"; >> /etc/apt/apt.conf && \
@@ -85,7 +85,7 @@ RUN apt-get update && \
     if (( ${#PACKAGES[@]} != 0 )); then apt-get install "${PACKAGES[@]}"; fi
 
 # Install base python packages
-RUN pip3 install requests telnetlib3 pyserial pylint xmlrunner pandas scipy numpy pdoc3
+RUN pip3 install requests telnetlib3 pyserial pylint xmlrunner pandas scipy numpy pdoc3 scp paramiko html2text
 
 # Install additional python packages
 RUN IFS=',' read -ra PACKAGES <<< "${ADDITIONAL_PYTHON_PACKAGES}" && \

@@ -1,5 +1,9 @@
 #!/bin/python3
-""" PyGrm utility to easily manage github self-hosted runners """
+"""
+Copyright (c) 2022 Pawel Gmurczyk
+
+PyGrm utility to easily manage github self-hosted runners
+"""
 
 import argparse
 from typing import List

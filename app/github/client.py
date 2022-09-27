@@ -1,4 +1,6 @@
 """
+Copyright (c) 2022 Pawel Gmurczyk
+
 Github client module.
 """
 import json
@@ -106,7 +108,8 @@ class Client:
         repository_request = requests.get(self.base_url + '/user/repos',
                                           headers={**self.json_header,
                                                    **self.auth_header,
-                                                   **self.content_header})
+                                                   **self.content_header},
+                                          timeout=5)
         if repository_request.status_code != 200:
             return Error.HTTP_ERROR, []
         return _parse_repositories(repository_request.text)
@@ -124,7 +127,8 @@ class Client:
                                        '/actions/runners',
                                        headers={**self.json_header,
                                                 **self.auth_header,
-                                                **self.content_header})
+                                                **self.content_header},
+                                       timeout=5)
         if runners_request.status_code != 200:
             return Error.HTTP_ERROR, []
         return _parse_runners(runners_request.text, repository)
@@ -140,7 +144,8 @@ class Client:
                                       '/actions/runners/registration-token',
                                       headers={**self.json_header,
                                                **self.auth_header,
-                                               **self.content_header})
+                                               **self.content_header},
+                                      timeout=5)
         if token_request.status_code != 201:
             return Error.HTTP_ERROR, ''
         return _parse_token(token_request.text)

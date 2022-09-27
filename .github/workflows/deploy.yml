@@ -1,0 +1,12 @@
+name: Deploy stage
+on: [push]
+
+jobs:
+  Documentation:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v3
+      - run: cd ${{ github.workspace }}
+      - run: cp ./docs/index.md .
+      - run: ./utils/generate_documentation.sh
+      - run: diff ./index.md ./docs/index.md && echo -e 'No new documentation generated! Generate documentation before commiting! See utils/generate_documentation.sh'

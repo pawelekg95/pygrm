@@ -1,4 +1,8 @@
-""" Error module. Provides all error codes and message casting """
+"""
+Copyright (c) 2022 Pawel Gmurczyk
+
+Error module. Provides all error codes and message casting
+"""
 from enum import Enum
 
 

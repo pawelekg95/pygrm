@@ -1,4 +1,8 @@
-""" Remote device module """
+"""
+Copyright (c) 2022 Pawel Gmurczyk
+
+Remote device module
+"""
 import os
 from typing import Tuple
 import paramiko
