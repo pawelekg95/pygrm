@@ -9,6 +9,10 @@ jobs:
       - run: cd ${{ github.workspace }}
       - run: cp ./docs/index.md .
       - run: ./utils/generate_documentation.sh
-      - run: result=0
-      - run: diff ./index.md ./docs/index.md || result=$?
-      - run: if [[ $result -eq 0 ]]; then echo -e 'No new documentation generated! Generate documentation before commiting! See utils/generate_documentation.sh'; return 1; fi
+      - run: |
+          result=0
+          diff ./index.md ./docs/index.md || result=$?
+          if [[ $result -eq 0 ]]; then \
+          echo -e 'No new documentation generated! Generate documentation before commiting! See utils/generate_documentation.sh' \
+          exit 1 \
+          fi
