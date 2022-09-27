@@ -12,7 +12,7 @@ jobs:
       - run: |
           result=0
           diff ./index.md ./docs/index.md || result=$?
-          if [[ $result -eq 1 ]]; then
+          if [[ $result -eq 0 ]]; then
             echo -e 'No new documentation generated! Generate documentation before commiting! See utils/generate_documentation.sh'
             exit 1
           fi
