@@ -1,8 +1,11 @@
 #!/bin/python3
 """
-Copyright (c) 2022 Pawel Gmurczyk
+PyGrm - Python Github Runners Manager.
 
-PyGrm utility to easily manage github self-hosted runners
+Utility to manage github self-hosted runners.
+Provides possibility to install, remove, start and stop github runners as:
+    - bare github service installed on the host [local / remote]
+    - inside docker container
 """
 
 import argparse
@@ -19,13 +22,16 @@ from app.terminal.interface import Interface  # pylint: disable=wrong-import-pos
 
 def parse_arguments(argv: List[str] = None):
     """
-    Parses arguments
+    Parses arguments provided from command line
+
     :param argv: System arguments passed to PyGrm to be parsed
     :return: Parsed arguments
     """
     parser = argparse.ArgumentParser(description='PyGrm. Python utility to manage github runners',
                                      formatter_class=argparse.RawTextHelpFormatter)
-    parser.add_argument('-t', '--token', dest='token', help='Private GitHub token', required=True)
+    parser.add_argument('-t', '--token', dest='token',
+                        help='Private GitHub token. Writing access required',
+                        required=True)
     parser.add_argument('-u', '--user', dest='user', help='GitHub user', required=True)
     return parser.parse_args(args=argv)
 

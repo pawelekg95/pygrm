@@ -1,13 +1,12 @@
 """
-Copyright (c) 2022 Pawel Gmurczyk
-
 Runner module
 """
 
 
 class Runner:  # pylint: disable=too-few-public-methods,too-many-instance-attributes
     """
-    Runner class
+    Runner.
+    Contains information about system, architecture and runner type.
     """
     def __init__(self,  # pylint: disable=too-many-arguments
                  name: str = '',
@@ -16,18 +15,17 @@ class Runner:  # pylint: disable=too-few-public-methods,too-many-instance-attrib
                  arch: str = '',
                  online: bool = False,
                  as_docker: bool = False,
-                 docker_enabled: bool = False,
-                 docker_container_id: str = ''):
+                 docker_enabled: bool = False):
         """
-        Constructor
-        :param name:
-        :param repository:
-        :param system:
-        :param arch:
-        :param online:
-        :param as_docker:
-        :param docker_enabled:
-        :param docker_container_id:
+        Constructor.
+
+        :param name: Runner name
+        :param repository: Project to which runner is bound
+        :param system: OS of the runner
+        :param arch: Runner's CPU architecture
+        :param online: Indicates whether runner is online
+        :param as_docker: Indicates whether runner is docker type
+        :param docker_enabled: Indicates whether runner allows docker operations on it.
         """
         self.name = name
         self.repository = repository
@@ -36,4 +34,3 @@ class Runner:  # pylint: disable=too-few-public-methods,too-many-instance-attrib
         self.online = online
         self.as_docker = as_docker
         self.docker_enabled = docker_enabled
-        self.docker_container_id = docker_container_id

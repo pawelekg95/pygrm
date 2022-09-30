@@ -1,6 +1,4 @@
 """
-Copyright (c) 2022 Pawel Gmurczyk
-
 Remove runner command module
 """
 from app.error.error import Error
@@ -14,6 +12,8 @@ class RemoveCommand(ICommand):
     @classmethod
     def perform(cls, *_) -> Error:
         """
+        To be implemented
+
         :param _:
         :return:
         """

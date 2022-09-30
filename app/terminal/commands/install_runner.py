@@ -1,11 +1,10 @@
 """
-Copyright (c) 2022 Pawel Gmurczyk
-
 Install runner command module
 """
 from typing import List
 import os
 from app.github.client import Client as GithubClient
+from app.github.data.repository import Repository
 from app.error.error import Error
 from app.terminal.commands.additional_information import Type
 from app.terminal.commands.icommand import ICommand
@@ -13,15 +12,25 @@ from app.terminal.commands.icommand import ICommand
 
 class InstallCommand(ICommand):
     """
-    Install command
+    Install command.
     """
     def perform(self, github_client: GithubClient = None,  # pylint: disable=too-many-return-statements
-                repositories: List[str] = None) -> Error:
+                repositories: List[Repository] = None) -> Error:
         """
-        Installs new runner
-        :param github_client:
-        :param repositories:
-        :return:
+        Installs new runner.
+        The most safe and preferable way of launching any CI jobs is an isolated environment,
+        such as docker container. Unfortunately, docker containers does not allow of systemd usage
+        on which github runner service is based. To overcome this limitation PyGrm provides
+        dockerfile to build images with special entrypoint, that manually launches github runner
+        on container creation.
+        It also allows to provide additional apt and python packages to make images more adjusted
+        to particular projects.
+        [ TO BE DONE ] Extend install command to get from user optional, additional packages.
+        Native, straight forward github service installation on the host is available as well.
+
+        :param github_client: Valid GithubClient initialized with private token and user name.
+        :param repositories: User's repositories
+        :return: Error code
         """
         self.init_perform(repositories)
         error_code, runners = github_client.get_runners(self.additional_info.repository)

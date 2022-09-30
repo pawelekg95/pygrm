@@ -1,8 +1,3 @@
-DO NOT MODIFY.
-
-Documentation generated automatically.
-
-See {repository_root}/utils/generate_documentation.sh for more details
 # Module `app.github`
 
 ## Sub-modules
@@ -11,7 +6,7 @@ See {repository_root}/utils/generate_documentation.sh for more details
 
     
 
-Copyright (c) 2022 Pawel Gmurczyk …
+Github client module.
 
 `[app.github.data](data/index.html "app.github.data")`
 
@@ -32,22 +27,25 @@ documentation generator").
 
 # Module `app.github.data.runner`
 
-Copyright (c) 2022 Pawel Gmurczyk
-
 Runner module
 
 ## Classes
 
 ` class Runner (name: str = '', repository: str = '', system: str = '', arch:
 str = '', online: bool = False, as_docker: bool = False, docker_enabled: bool
-= False, docker_container_id: str = '') `
+= False) `
 
     
 
-Runner class
+Runner. Contains information about system, architecture and runner type.
 
-Constructor :param name: :param repository: :param system: :param arch: :param
-online: :param as_docker: :param docker_enabled: :param docker_container_id:
+Constructor.
+
+:param name: Runner name :param repository: Project to which runner is bound
+:param system: OS of the runner :param arch: Runner's CPU architecture :param
+online: Indicates whether runner is online :param as_docker: Indicates whether
+runner is docker type :param docker_enabled: Indicates whether runner allows
+docker operations on it.
 
 # Index
 
@@ -69,13 +67,13 @@ documentation generator").
 
     
 
-Copyright (c) 2022 Pawel Gmurczyk …
+Repository module
 
 `[app.github.data.runner](runner.html "app.github.data.runner")`
 
     
 
-Copyright (c) 2022 Pawel Gmurczyk …
+Runner module
 
 # Index
 
@@ -92,8 +90,6 @@ documentation generator").
 
 # Module `app.github.data.repository`
 
-Copyright (c) 2022 Pawel Gmurczyk
-
 Repository module
 
 ## Classes
@@ -102,9 +98,9 @@ Repository module
 
     
 
-Repository class
+Repository
 
-Constructor :param name:
+Constructor :param name: Repository name
 
 # Index
 
@@ -120,8 +116,6 @@ documentation generator").
 
 # Module `app.github.client`
 
-Copyright (c) 2022 Pawel Gmurczyk
-
 Github client module.
 
 ## Classes
@@ -132,7 +126,10 @@ Github client module.
 
 Github api client.
 
-Constructor :param user: :param auth_token:
+Constructor. Takes user name and its' private token to perform commands.
+Moreover, prepares common headers used in all api requests.
+
+:param user: User name :param auth_token: User's private token
 
 ### Methods
 
@@ -144,7 +141,9 @@ List[[Repository](data/repository.html#app.github.data.repository.Repository
 
     
 
-Get user repositories :return:
+Sends request to retrieve user's repositories information.
+
+:return: Error code and repositories list.
 
 ` def get_runners(self, repository: str = '') ‑>
 Tuple[[Error](../error/error.html#app.error.error.Error
@@ -154,7 +153,9 @@ List[[Runner](data/runner.html#app.github.data.runner.Runner
 
     
 
-Get self-hosted runners for repository :param repository: :return:
+Sends request to retrieve runners registered for a particular project
+
+:param repository: Project name to query :return: Error code and runners list
 
 ` def registration_token(self, repository: str = '') ‑>
 Tuple[[Error](../error/error.html#app.error.error.Error
@@ -162,7 +163,8 @@ Tuple[[Error](../error/error.html#app.error.error.Error
 
     
 
-Get self-hosted github runner registration token :param repository: :return:
+Requests fresh registration token for new runner :param repository: Project
+name to register runner :return: Error code and registration token
 
 # Index
 
@@ -182,21 +184,28 @@ documentation generator").
 
 # Module `app.terminal.interface`
 
-Copyright (c) 2022 Pawel Gmurczyk
+Command line interface module.
 
-Command line interface module
+Provides classes to handle user input and perform particular commands.
 
 ## Classes
 
 ` class Command (description: str = '', command:
 Callable[[[Client](../github/client.html#app.github.client.Client
-"app.github.client.Client"), List[str]],
+"app.github.client.Client"),
+List[[Repository](../github/data/repository.html#app.github.data.repository.Repository
+"app.github.data.repository.Repository")]],
 [Error](../error/error.html#app.error.error.Error "app.error.error.Error")] =
 None) `
 
     
 
-Command abstraction class. Contains callable function and its' description
+Command to perform. Contains callable function and its' description
+
+Constructor. Takes description of the command and command itself as Callable
+that can take GithubClient object and list of repositories.
+
+:param description: Command description :param command:
 
 ` class Interface (github_client:
 [Client](../github/client.html#app.github.client.Client
@@ -204,35 +213,53 @@ Command abstraction class. Contains callable function and its' description
 
     
 
-Interface class
+Interface class. Main loop of the application. Gets input from user and calls
+Commands stored as a map of command name and Command object.
 
-Constructor :param github_client: Initialized Github client to be used
+Constructor. Initializes available commands and fetches repositories of the
+user logged in GithubClient. Starts main loop immediately.
+
+:param github_client: Valid GithubClient initialized with private token and
+user name.
 
 ### Methods
 
-` def list_repositories(self, *_) `
+` def list_repositories(self, *_) ‑>
+[Error](../error/error.html#app.error.error.Error "app.error.error.Error") `
 
     
 
-Lists all repositories of user :param _: :return:
+Lists all user's repositories
 
-` def loop(self) `
+:param _: Unused :return: Error code
 
-    
-
-Main loop :return:
-
-` def print_description(self, *_) `
+` def loop(self) ‑> None `
 
     
 
-Prints description :param _: :return:
+Main loop. Takes input from user and calls corresponding Command object's
+callable method. In case of not existing command - continues, in case of
+command failure prints error message.
 
-` def stop(self, *_) `
+:return: None
+
+` def print_description(self, *_) ‑>
+[Error](../error/error.html#app.error.error.Error "app.error.error.Error") `
 
     
 
-Stop pygrm :param _: :return:
+Prints description of available commands
+
+:param _: Unused :return: Error code
+
+` def stop(self, *_) ‑> [Error](../error/error.html#app.error.error.Error
+"app.error.error.Error") `
+
+    
+
+Stops whole pygrm
+
+:param _: Unused :return: Error code
 
 # Index
 
@@ -265,7 +292,7 @@ documentation generator").
 
     
 
-Copyright (c) 2022 Pawel Gmurczyk …
+Command line interface module …
 
 # Index
 
@@ -281,8 +308,6 @@ Generated by [pdoc 0.10.0](https://pdoc3.github.io/pdoc "pdoc: Python API
 documentation generator").
 
 # Module `app.terminal.commands.remove_runner`
-
-Copyright (c) 2022 Pawel Gmurczyk
 
 Remove runner command module
 
@@ -307,6 +332,8 @@ Constructor
 
     
 
+To be implemented
+
 :param _: :return:
 
 ### Inherited members
@@ -330,8 +357,6 @@ documentation generator").
 
 # Module `app.terminal.commands.start_runner`
 
-Copyright (c) 2022 Pawel Gmurczyk
-
 Start runner command module
 
 ## Classes
@@ -350,13 +375,20 @@ Constructor
 
 ### Methods
 
-` def perform(self, _, repositories: List[str] = None) ‑>
+` def perform(self, _, repositories:
+List[[Repository](../../github/data/repository.html#app.github.data.repository.Repository
+"app.github.data.repository.Repository")] = None) ‑>
 [Error](../../error/error.html#app.error.error.Error "app.error.error.Error")
 `
 
     
 
-Start runner command :param _: :param repositories: :return:
+Starts github runner. Shell runners are systemd services and that's how they
+are started. Docker doesn't support systemd. That is why images are having
+special entrypoint to launch github runner explicitly as a normal process.
+Containers are being launched and set to auto launch on boot.
+
+:param _: Unused :param repositories: User's repositories :return: Error code
 
 ### Inherited members
 
@@ -379,8 +411,6 @@ documentation generator").
 
 # Module `app.terminal.commands.list_runners`
 
-Copyright (c) 2022 Pawel Gmurczyk
-
 List runner command module
 
 ## Classes
@@ -401,13 +431,19 @@ Constructor
 
 ` def perform(github_client:
 [Client](../../github/client.html#app.github.client.Client
-"app.github.client.Client") = None, repositories: List[str] = None) ‑>
+"app.github.client.Client") = None, repositories:
+List[[Repository](../../github/data/repository.html#app.github.data.repository.Repository
+"app.github.data.repository.Repository")] = None) ‑>
 [Error](../../error/error.html#app.error.error.Error "app.error.error.Error")
 `
 
     
 
-Lists runners :param github_client: :param repositories: :return:
+Lists all runners assigned to a particular user's repository and prints its'
+settings.
+
+:param github_client: Valid GithubClient initialized with private token and
+user name. :param repositories: User's repositories :return: Error code
 
 ### Inherited members
 
@@ -437,56 +473,56 @@ documentation generator").
 
     
 
-Copyright (c) 2022 Pawel Gmurczyk …
+Types for additional info that can be requested from user
 
 `[app.terminal.commands.common_parts](common_parts.html
 "app.terminal.commands.common_parts")`
 
     
 
-Copyright (c) 2022 Pawel Gmurczyk …
+Provides functions to get some all-commands-wide information.
 
 `[app.terminal.commands.icommand](icommand.html
 "app.terminal.commands.icommand")`
 
     
 
-Copyright (c) 2022 Pawel Gmurczyk …
+Base class of other command classes
 
 `[app.terminal.commands.install_runner](install_runner.html
 "app.terminal.commands.install_runner")`
 
     
 
-Copyright (c) 2022 Pawel Gmurczyk …
+Install runner command module
 
 `[app.terminal.commands.list_runners](list_runners.html
 "app.terminal.commands.list_runners")`
 
     
 
-Copyright (c) 2022 Pawel Gmurczyk …
+List runner command module
 
 `[app.terminal.commands.remove_runner](remove_runner.html
 "app.terminal.commands.remove_runner")`
 
     
 
-Copyright (c) 2022 Pawel Gmurczyk …
+Remove runner command module
 
 `[app.terminal.commands.start_runner](start_runner.html
 "app.terminal.commands.start_runner")`
 
     
 
-Copyright (c) 2022 Pawel Gmurczyk …
+Start runner command module
 
 `[app.terminal.commands.stop_runner](stop_runner.html
 "app.terminal.commands.stop_runner")`
 
     
 
-Copyright (c) 2022 Pawel Gmurczyk …
+Stop runner command module
 
 # Index
 
@@ -509,9 +545,7 @@ documentation generator").
 
 # Module `app.terminal.commands.common_parts`
 
-Copyright (c) 2022 Pawel Gmurczyk
-
-Base class of other command classes
+Provides functions to get some all-commands-wide information.
 
 ## Functions
 
@@ -523,7 +557,8 @@ Base class of other command classes
 
     
 
-Get repository and runner name from user :param token: :return:
+Gets repository and runner name from user :param token: AdditionalInfo object
+to be filled :return: Error code
 
 ` def destination_information(token:
 [AdditionalInfo](additional_information.html#app.terminal.commands.additional_information.AdditionalInfo
@@ -533,7 +568,8 @@ Get repository and runner name from user :param token: :return:
 
     
 
-Get destination information from user :param token: :return:
+Gets destination host information from user :param token: AdditionalInfo
+object to be filled :return: Error code
 
 ` def runner_type_information(token:
 [AdditionalInfo](additional_information.html#app.terminal.commands.additional_information.AdditionalInfo
@@ -543,7 +579,8 @@ Get destination information from user :param token: :return:
 
     
 
-Get runner type info from user :param token: :return:
+Gets runner type information from user :param token: AdditionalInfo object to
+be filled :return: Error code
 
 # Index
 
@@ -561,8 +598,6 @@ documentation generator").
 
 # Module `app.terminal.commands.stop_runner`
 
-Copyright (c) 2022 Pawel Gmurczyk
-
 Stop runner command module
 
 ## Classes
@@ -571,7 +606,7 @@ Stop runner command module
 
     
 
-Stop runner command
+Stop runner command.
 
 Constructor
 
@@ -581,13 +616,19 @@ Constructor
 
 ### Methods
 
-` def perform(self, _, repositories: List[str] = None) ‑>
+` def perform(self, _, repositories:
+List[[Repository](../../github/data/repository.html#app.github.data.repository.Repository
+"app.github.data.repository.Repository")] = None) ‑>
 [Error](../../error/error.html#app.error.error.Error "app.error.error.Error")
 `
 
     
 
-Stop runner :param _: Unused :param repositories: :return:
+Stops github runner. For native (shell) runners stops service in systemd using
+script provided from Github runner package. Docker runners are being forbidden
+from auto launching on boot and stopped immediately.
+
+:param _: Unused :param repositories: User's repositories :return: Error code
 
 ### Inherited members
 
@@ -610,8 +651,6 @@ documentation generator").
 
 # Module `app.terminal.commands.icommand`
 
-Copyright (c) 2022 Pawel Gmurczyk
-
 Base class of other command classes
 
 ## Classes
@@ -620,7 +659,8 @@ Base class of other command classes
 
     
 
-Base class of other commands
+Base class for other commands. Takes base input from user, such as destination
+host and runner type.
 
 Constructor
 
@@ -642,7 +682,9 @@ List[[Repository](../../github/data/repository.html#app.github.data.repository.R
 
     
 
-Init perform of the command :param repositories: :return:
+Initial command to perform. Gathers basic information from user and stores it
+as AdditionalInfo object, accessible for descendants. Also, does very basic
+verification. :param repositories: User's repositories :return: Error code
 
 # Index
 
@@ -660,9 +702,7 @@ documentation generator").
 
 # Module `app.terminal.commands.additional_information`
 
-Copyright (c) 2022 Pawel Gmurczyk
-
-Module for querying additional information from user
+Types for additional info that can be requested from user
 
 ## Classes
 
@@ -737,8 +777,6 @@ documentation generator").
 
 # Module `app.terminal.commands.install_runner`
 
-Copyright (c) 2022 Pawel Gmurczyk
-
 Install runner command module
 
 ## Classes
@@ -747,7 +785,7 @@ Install runner command module
 
     
 
-Install command
+Install command.
 
 Constructor
 
@@ -759,13 +797,26 @@ Constructor
 
 ` def perform(self, github_client:
 [Client](../../github/client.html#app.github.client.Client
-"app.github.client.Client") = None, repositories: List[str] = None) ‑>
+"app.github.client.Client") = None, repositories:
+List[[Repository](../../github/data/repository.html#app.github.data.repository.Repository
+"app.github.data.repository.Repository")] = None) ‑>
 [Error](../../error/error.html#app.error.error.Error "app.error.error.Error")
 `
 
     
 
-Installs new runner :param github_client: :param repositories: :return:
+Installs new runner. The most safe and preferable way of launching any CI jobs
+is an isolated environment, such as docker container. Unfortunately, docker
+containers does not allow of systemd usage on which github runner service is
+based. To overcome this limitation PyGrm provides dockerfile to build images
+with special entrypoint, that manually launches github runner on container
+creation. It also allows to provide additional apt and python packages to make
+images more adjusted to particular projects. [ TO BE DONE ] Extend install
+command to get from user optional, additional packages. Native, straight
+forward github service installation on the host is available as well.
+
+:param github_client: Valid GithubClient initialized with private token and
+user name. :param repositories: User's repositories :return: Error code
 
 ### Inherited members
 
@@ -806,7 +857,7 @@ documentation generator").
 
     
 
-Copyright (c) 2022 Pawel Gmurczyk …
+PyGrm - Python Github Runners Manager …
 
 `[app.terminal](terminal/index.html "app.terminal")`
 
@@ -827,9 +878,11 @@ documentation generator").
 
 # Module `app.pygrm`
 
-Copyright (c) 2022 Pawel Gmurczyk
+PyGrm - Python Github Runners Manager.
 
-PyGrm utility to easily manage github self-hosted runners
+Utility to manage github self-hosted runners. Provides possibility to install,
+remove, start and stop github runners as: \- bare github service installed on
+the host [local / remote] \- inside docker container
 
 ## Functions
 
@@ -837,8 +890,10 @@ PyGrm utility to easily manage github self-hosted runners
 
     
 
-Parses arguments :param argv: System arguments passed to PyGrm to be parsed
-:return: Parsed arguments
+Parses arguments provided from command line
+
+:param argv: System arguments passed to PyGrm to be parsed :return: Parsed
+arguments
 
 # Index
 
@@ -860,13 +915,13 @@ documentation generator").
 
     
 
-Copyright (c) 2022 Pawel Gmurczyk …
+Module that provides abstraction layer for local device
 
 `[app.device.remote](remote.html "app.device.remote")`
 
     
 
-Copyright (c) 2022 Pawel Gmurczyk …
+Remote device module
 
 # Index
 
@@ -883,8 +938,6 @@ documentation generator").
 
 # Module `app.device.local`
 
-Copyright (c) 2022 Pawel Gmurczyk
-
 Module that provides abstraction layer for local device
 
 ## Classes
@@ -893,7 +946,8 @@ Module that provides abstraction layer for local device
 
     
 
-Abstraction to represent local device
+Class representing local device. Provides methods to manage docker containers
+/ images and github service on native system as systemd service
 
 ### Static methods
 
@@ -903,7 +957,7 @@ Tuple[[Error](../error/error.html#app.error.error.Error
 
     
 
-Build docker image :param _: :return:
+To be implemented :param _: :return:
 
 ` def delete_image(*_) ‑>
 Tuple[[Error](../error/error.html#app.error.error.Error
@@ -911,7 +965,7 @@ Tuple[[Error](../error/error.html#app.error.error.Error
 
     
 
-Delete image :param _: :return:
+To be implemented :param _: :return:
 
 ` def install_github_service(*_) ‑>
 Tuple[[Error](../error/error.html#app.error.error.Error
@@ -919,7 +973,7 @@ Tuple[[Error](../error/error.html#app.error.error.Error
 
     
 
-Install github runner as a service :param _: :return:
+To be implemented :param _: :return:
 
 ` def start_container(*_) ‑>
 Tuple[[Error](../error/error.html#app.error.error.Error
@@ -927,7 +981,7 @@ Tuple[[Error](../error/error.html#app.error.error.Error
 
     
 
-Start docker container from image name :param _: :return:
+To be implemented :param _: :return:
 
 ` def start_github_service(*_) ‑>
 Tuple[[Error](../error/error.html#app.error.error.Error
@@ -935,7 +989,7 @@ Tuple[[Error](../error/error.html#app.error.error.Error
 
     
 
-Start github runner service :param _: :return:
+To be implemented :param _: :return:
 
 ` def stop_container(*_) ‑>
 Tuple[[Error](../error/error.html#app.error.error.Error
@@ -943,7 +997,7 @@ Tuple[[Error](../error/error.html#app.error.error.Error
 
     
 
-Stop container started upon image name :param _: :return:
+To be implemented :param _: :return:
 
 ` def stop_github_service(*_) ‑>
 Tuple[[Error](../error/error.html#app.error.error.Error
@@ -951,7 +1005,7 @@ Tuple[[Error](../error/error.html#app.error.error.Error
 
     
 
-Stop github runner service :param _: :return:
+To be implemented :param _: :return:
 
 # Index
 
@@ -975,8 +1029,6 @@ documentation generator").
 
 # Module `app.device.remote`
 
-Copyright (c) 2022 Pawel Gmurczyk
-
 Remote device module
 
 ## Classes
@@ -985,10 +1037,14 @@ Remote device module
 
     
 
-RemoteClient
+Class representing remote device. Provides methods to manage docker containers
+/ images and github service on native system as systemd service
 
-Remote device abstraction :param host: Host address/name :param user: User to
-log in :param password: User password
+Constructor. Creates ssh and scp connection with host. Raises socket.error in
+case of failure.
+
+:param host: Host address/name :param user: User to log in - must be sudoer
+:param password: User password
 
 ### Methods
 
@@ -1000,9 +1056,19 @@ Tuple[[Error](../error/error.html#app.error.error.Error
 
     
 
-Build docker image :param docker_file_path: :param github_user: :param
-github_token: :param repository_name: :param image_name: :param
-additional_linux_packages: :param additional_python_packages: :return:
+Builds docker image. Copies dockerfile from path provided as an argument and
+an entrypoint from the same directory to the remote host's /tmp dir and builds
+docker image, naming it from concatenation of repository and image name.
+Github user name and token are required to build github runner inside the
+image. Passes additional linux and python packages to docker build context.
+
+:param docker_file_path: Local path to dockerfile. Entrypoint must be within
+the same directory. :param github_user: Github user name :param github_token:
+Private token of the user :param repository_name: Repository name to assign
+runner :param image_name: Image name :param additional_linux_packages: String
+with name of additional linux packages, comma seperated. :param
+additional_python_packages: String with name of additional python packages,
+comma seperated. :return: Error code, stdout and stderr strings
 
 ` def delete_image(self, image_name: str = '') ‑>
 Tuple[[Error](../error/error.html#app.error.error.Error
@@ -1010,7 +1076,10 @@ Tuple[[Error](../error/error.html#app.error.error.Error
 
     
 
-Delete docker image :param image_name: :return:
+Deletes docker image.
+
+:param image_name: Image name to be deleted. :return: Error code, stdout and
+stderr strings
 
 ` def install_github_service(self, github_user: str = '', github_token: str =
 '', repository_name: str = '', runner_name: str = '', dest_dir: str =
@@ -1020,8 +1089,15 @@ Tuple[[Error](../error/error.html#app.error.error.Error
 
     
 
-Install github runner service :param github_user: :param github_token: :param
-repository_name: :param runner_name: :param dest_dir: :return:
+Installs github runner service.
+
+Downloads github runner package for host's architecture and installs it in the
+destination directory. After installing, registers new runner for the project.
+
+:param github_user: Github user name :param github_token: Private token of the
+user :param repository_name: Repository name to assign runner :param
+runner_name: Runner name :param dest_dir: Path where to download and install
+github runner :return: Error code, stdout and stderr strings
 
 ` def start_container(self, image_name: str = '') ‑>
 Tuple[[Error](../error/error.html#app.error.error.Error
@@ -1029,7 +1105,11 @@ Tuple[[Error](../error/error.html#app.error.error.Error
 
     
 
-Start docker container upon image name :param image_name: :return:
+Starts docker container. Container is set to be launched on boot and is
+started immediately.
+
+:param image_name: Image name on which container has to be created. :return:
+Error code, stdout and stderr strings
 
 ` def start_github_service(self, runner_name: str = '', service_dir: str =
 '/home/github-runner') ‑>
@@ -1038,7 +1118,12 @@ Tuple[[Error](../error/error.html#app.error.error.Error
 
     
 
-Start github runner service :param runner_name: :param service_dir: :return:
+Starts github runner service.
+
+Enables github runner service in systemd on the host.
+
+:param runner_name: Runner name. :param service_dir: Path where github runner
+is installed. :return: Error code, stdout and stderr strings
 
 ` def stop_container(self, image_name: str = '') ‑>
 Tuple[[Error](../error/error.html#app.error.error.Error
@@ -1046,7 +1131,11 @@ Tuple[[Error](../error/error.html#app.error.error.Error
 
     
 
-Stop docker container :param image_name: :return:
+Stops docker container. Updates container restart policy to 'no' and stops
+container immediately.
+
+:param image_name: Image name on which container was created. :return: Error
+code, stdout and stderr strings
 
 ` def stop_github_service(self, runner_name: str = '', service_dir: str =
 '/home/github-runner') ‑>
@@ -1055,7 +1144,12 @@ Tuple[[Error](../error/error.html#app.error.error.Error
 
     
 
-Stop github runner service :param runner_name: :param service_dir: :return:
+Stops github runner service.
+
+Stops github runner service in systemd.
+
+:param runner_name: Runner name. :param service_dir: Path where github runner
+is installed. :return: Error code, stdout and stderr strings
 
 # Index
 
@@ -1085,7 +1179,7 @@ documentation generator").
 
     
 
-Copyright (c) 2022 Pawel Gmurczyk …
+Error module. Provides all error codes and message casting
 
 # Index
 
@@ -1101,8 +1195,6 @@ documentation generator").
 
 # Module `app.error.error`
 
-Copyright (c) 2022 Pawel Gmurczyk
-
 Error module. Provides all error codes and message casting
 
 ## Functions
@@ -1111,8 +1203,7 @@ Error module. Provides all error codes and message casting
 
     
 
-Casts error codes to description message :param error: Error code :return:
-Description message
+Casts error codes to message :param error: Error code :return: Error message
 
 ## Classes
 
@@ -1180,4 +1271,4 @@ Error codes used in PyGrm
 Generated by [pdoc 0.10.0](https://pdoc3.github.io/pdoc "pdoc: Python API
 documentation generator").
 
-27/09/2022 15:18:05 CEST
+30/09/2022 16:44:16 CEST

@@ -1,6 +1,4 @@
 """
-Copyright (c) 2022 Pawel Gmurczyk
-
 Github client module.
 """
 import json
@@ -20,8 +18,8 @@ def _parse_repositories(repository_json: str = '')\
         -> Tuple[Error, List[Repository]]:
     """
     Parses response from github api repositories request
-    :param repository_json:
-    :return:
+    :param repository_json: Response from github api
+    :return: Error code and list of repositories
     """
     try:
         parsed_json = json.loads(repository_json)
@@ -40,9 +38,9 @@ def _parse_runners(runners_json: str = '', repository: str = '')\
         -> Tuple[Error, List[Runner]]:
     """
     Parses response from github api runners request
-    :param runners_json:
-    :param repository:
-    :return:
+    :param runners_json: Response from github api
+    :param repository: Project name for registered runners
+    :return: Error code and list of runners registered in particular repository
     """
     try:
         parsed_json = json.loads(runners_json)
@@ -73,8 +71,8 @@ def _parse_token(token_json: str = '')\
         -> Tuple[Error, str]:
     """
     Parses github api token request
-    :param token_json:
-    :return:
+    :param token_json: Response from github api
+    :return: Error code and token string
     """
     try:
         parsed_json = json.loads(token_json)
@@ -89,9 +87,12 @@ class Client:
     """
     def __init__(self, user: str = '', auth_token: str = ''):
         """
-        Constructor
-        :param user:
-        :param auth_token:
+        Constructor.
+        Takes user name and its' private token to perform commands.
+        Moreover, prepares common headers used in all api requests.
+
+        :param user: User name
+        :param auth_token: User's private token
         """
         self.base_url = 'https://api.github.com'
         self.user = user
@@ -102,8 +103,9 @@ class Client:
 
     def get_repositories(self) -> Tuple[Error, List[Repository]]:
         """
-        Get user repositories
-        :return:
+        Sends request to retrieve user's repositories information.
+
+        :return: Error code and repositories list.
         """
         repository_request = requests.get(self.base_url + '/user/repos',
                                           headers={**self.json_header,
@@ -116,9 +118,10 @@ class Client:
 
     def get_runners(self, repository: str = '') -> Tuple[Error, List[Runner]]:
         """
-        Get self-hosted runners for repository
-        :param repository:
-        :return:
+        Sends request to retrieve runners registered for a particular project
+
+        :param repository: Project name to query
+        :return: Error code and runners list
         """
         if not repository:
             return Error.EMPTY, []
@@ -135,9 +138,9 @@ class Client:
 
     def registration_token(self, repository: str = '') -> Tuple[Error, str]:
         """
-        Get self-hosted github runner registration token
-        :param repository:
-        :return:
+        Requests fresh registration token for new runner
+        :param repository: Project name to register runner
+        :return: Error code and registration token
         """
         token_request = requests.post(self.base_url + '/repos/' +
                                       self.user + '/' + repository +

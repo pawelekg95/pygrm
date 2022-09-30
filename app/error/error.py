@@ -1,6 +1,4 @@
 """
-Copyright (c) 2022 Pawel Gmurczyk
-
 Error module. Provides all error codes and message casting
 """
 from enum import Enum
@@ -32,9 +30,9 @@ _MESSAGES = {
 
 def message(error: Error = None) -> str:
     """
-    Casts error codes to description message
+    Casts error codes to message
     :param error: Error code
-    :return: Description message
+    :return: Error message
     """
     for error_code, description in _MESSAGES.items():
         if error_code == error:

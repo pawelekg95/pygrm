@@ -1,32 +1,48 @@
 """
-Copyright (c) 2022 Pawel Gmurczyk
+Command line interface module.
 
-Command line interface module
+Provides classes to handle user input and perform particular commands.
 """
 from typing import Callable, List
 from app.error.error import Error, message
 from app.github.client import Client as GithubClient
+from app.github.data.repository import Repository
 from .commands import install_runner, remove_runner, stop_runner, start_runner, list_runners
 
 
 class Command:  # pylint: disable=too-few-public-methods
     """
-    Command abstraction class. Contains callable function and its' description
+    Command to perform.
+    Contains callable function and its' description
     """
     def __init__(self,
-                 description: str = '', command: Callable[[GithubClient, List[str]], Error] = None):
+                 description: str = '',
+                 command: Callable[[GithubClient, List[Repository]], Error] = None):
+        """
+        Constructor.
+        Takes description of the command and command itself as Callable
+        that can take GithubClient object and list of repositories.
+
+        :param description: Command description
+        :param command:
+        """
         self.description = description
         self.command = command
 
 
 class Interface:
     """
-    Interface class
+    Interface class.
+    Main loop of the application.
+    Gets input from user and calls Commands stored as a map of command name and Command object.
     """
     def __init__(self, github_client: GithubClient = None):
         """
-        Constructor
-        :param github_client: Initialized Github client to be used
+        Constructor.
+        Initializes available commands and fetches repositories of the user logged in GithubClient.
+        Starts main loop immediately.
+
+        :param github_client: Valid GithubClient initialized with private token and user name.
         """
         self.running = True
         self.github_client = github_client
@@ -47,41 +63,48 @@ class Interface:
 
         self.loop()
 
-    def list_repositories(self, *_):
+    def list_repositories(self, *_) -> Error:
         """
-        Lists all repositories of user
-        :param _:
-        :return:
+        Lists all user's repositories
+
+        :param _: Unused
+        :return: Error code
         """
         for repository in self.repositories:
             print(repository.name)
         return Error.OK
 
-    def print_description(self, *_):
+    def print_description(self, *_) -> Error:
         """
-        Prints description
-        :param _:
-        :return:
+        Prints description of available commands
+
+        :param _: Unused
+        :return: Error code
         """
         print('== PyGrm ==')
         for command_key, command in self.option_mapping.items():
             print(command_key, ' - ', command.description)
         return Error.OK
 
-    def stop(self, *_):
+    def stop(self, *_) -> Error:
         """
-        Stop pygrm
-        :param _:
-        :return:
+        Stops whole pygrm
+
+        :param _: Unused
+        :return: Error code
         """
         print('Stopping PyGrm')
         self.running = False
         return Error.OK
 
-    def loop(self):
+    def loop(self) -> None:
         """
-        Main loop
-        :return:
+        Main loop.
+        Takes input from user and calls corresponding Command object's callable method.
+        In case of not existing command - continues,
+        in case of command failure prints error message.
+
+        :return: None
         """
         self.print_description()
         while self.running:
