@@ -40,7 +40,7 @@ jobs:
   Document_Generator_Shellcheck:
     uses: ./.github/workflows/quality_template.yml
     with:
-      module_name: utils/generate_documentation.sh
+      module_name: utils/generate_github_pages.sh
       linter: shellcheck
     secrets: inherit
 
