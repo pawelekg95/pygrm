@@ -20,6 +20,7 @@ class RemoteClient:
         """
         Constructor.
         Creates ssh and scp connection with host. Raises socket.error in case of failure.
+
         :param host: Host address/name
         :param user: User to log in - must be sudoer
         :param password: User password
@@ -39,6 +40,7 @@ class RemoteClient:
     def __container_running(self, image_name: str = '') -> bool:
         """
         Checks if container based on provided image name is running
+
         :param image_name: Image name of the container
         :return: True if container is running, false otherwise
         """
@@ -64,6 +66,7 @@ class RemoteClient:
         naming it from concatenation of repository and image name.
         Github user name and token are required to build github runner inside the image.
         Passes additional linux and python packages to docker build context.
+
         :param docker_file_path: Local path to dockerfile.
         Entrypoint must be within the same directory.
         :param github_user: Github user name
@@ -96,9 +99,10 @@ class RemoteClient:
                         image_name: str = '') -> Tuple[Error, str, str]:
         """
         Starts docker container.
+        Container is set to be launched on boot and is started immediately.
 
-        :param image_name:
-        :return:
+        :param image_name: Image name on which container has to be created.
+        :return: Error code, stdout and stderr strings
         """
         if self.__container_running(image_name):
             return Error.ALREADY, '', ''
@@ -110,9 +114,11 @@ class RemoteClient:
     def stop_container(self,
                        image_name: str = '') -> Tuple[Error, str, str]:
         """
-        Stop docker container
-        :param image_name:
-        :return:
+        Stops docker container.
+        Updates container restart policy to 'no' and stops container immediately.
+
+        :param image_name: Image name on which container was created.
+        :return: Error code, stdout and stderr strings
         """
         _, stdout, stderr = self.ssh_client.exec_command(
             'sudo docker ps -a -q  --filter ancestor=' + image_name)
@@ -133,9 +139,10 @@ class RemoteClient:
     def delete_image(self,
                      image_name: str = '') -> Tuple[Error, str, str]:
         """
-        Delete docker image
-        :param image_name:
-        :return:
+        Deletes docker image.
+
+        :param image_name: Image name to be deleted.
+        :return: Error code, stdout and stderr strings
         """
         _, stdout, stderr = self.ssh_client.exec_command(
             'sudo docker image rm ' + image_name, get_pty=True)
@@ -151,13 +158,18 @@ class RemoteClient:
                                runner_name: str = '',
                                dest_dir: str = '/home/github-runner') -> Tuple[Error, str, str]:
         """
-        Install github runner service
-        :param github_user:
-        :param github_token:
-        :param repository_name:
-        :param runner_name:
-        :param dest_dir:
-        :return:
+        Installs github runner service.
+
+        Downloads github runner package for host's architecture
+        and installs it in the destination directory.
+        After installing, registers new runner for the project.
+
+        :param github_user: Github user name
+        :param github_token: Private token of the user
+        :param repository_name: Repository name to assign runner
+        :param runner_name: Runner name
+        :param dest_dir: Path where to download and install github runner
+        :return: Error code, stdout and stderr strings
         """
         architectures = {
             "amd64": "x64",
@@ -214,10 +226,13 @@ class RemoteClient:
                              runner_name: str = '',
                              service_dir: str = '/home/github-runner') -> Tuple[Error, str, str]:
         """
-        Start github runner service
-        :param runner_name:
-        :param service_dir:
-        :return:
+        Starts github runner service.
+
+        Enables github runner service in systemd on the host.
+
+        :param runner_name: Runner name.
+        :param service_dir: Path where github runner is installed.
+        :return: Error code, stdout and stderr strings
         """
         _, stdout, stderr = self.ssh_client.exec_command(
             'sudo ' + service_dir + '/' + runner_name + '/svc.sh start')
@@ -228,10 +243,13 @@ class RemoteClient:
                             runner_name: str = '',
                             service_dir: str = '/home/github-runner') -> Tuple[Error, str, str]:
         """
-        Stop github runner service
-        :param runner_name:
-        :param service_dir:
-        :return:
+        Stops github runner service.
+
+        Stops github runner service in systemd.
+
+        :param runner_name: Runner name.
+        :param service_dir: Path where github runner is installed.
+        :return: Error code, stdout and stderr strings
         """
         _, stdout, stderr = self.ssh_client.exec_command(
             'sudo ' + service_dir + '/' + runner_name + '/svc.sh stop')
