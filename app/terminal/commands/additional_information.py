@@ -1,7 +1,5 @@
 """
-Copyright (c) 2022 Pawel Gmurczyk
-
-Module for querying additional information from user
+Types for additional info that can be requested from user
 """
 from enum import Enum
 

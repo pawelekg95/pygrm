@@ -1,3 +1,4 @@
+name: Code quality template
 on: [push]
 
 jobs:

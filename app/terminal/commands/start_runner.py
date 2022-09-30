@@ -1,24 +1,26 @@
 """
-Copyright (c) 2022 Pawel Gmurczyk
-
 Start runner command module
 """
 from typing import List
-from app.error.error import Error
+from app.terminal.commands.icommand import ICommand, Error, Repository
 from app.terminal.commands.additional_information import Type
-from app.terminal.commands.icommand import ICommand
 
 
 class StartCommand(ICommand):
     """
     Start runner command
     """
-    def perform(self, _, repositories: List[str] = None) -> Error:
+    def perform(self, _, repositories: List[Repository] = None) -> Error:
         """
-        Start runner command
-        :param _:
-        :param repositories:
-        :return:
+        Starts github runner.
+        Shell runners are systemd services and that's how they are started.
+        Docker doesn't support systemd. That is why images are having special entrypoint
+        to launch github runner explicitly as a normal process.
+        Containers are being launched and set to auto launch on boot.
+
+        :param _: Unused
+        :param repositories: User's repositories
+        :return: Error code
         """
         self.init_perform(repositories)
         return self.device_manager.start_container(

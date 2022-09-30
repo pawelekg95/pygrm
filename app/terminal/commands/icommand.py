@@ -1,6 +1,4 @@
 """
-Copyright (c) 2022 Pawel Gmurczyk
-
 Base class of other command classes
 """
 from typing import List
@@ -14,7 +12,8 @@ from app.github.data.repository import Repository
 
 class ICommand:  # pylint: disable=too-few-public-methods
     """
-    Base class of other commands
+    Base class for other commands.
+    Takes base input from user, such as destination host and runner type.
     """
     def __init__(self):
         """
@@ -25,9 +24,10 @@ class ICommand:  # pylint: disable=too-few-public-methods
 
     def init_perform(self, repositories: List[Repository] = None) -> Error:
         """
-        Init perform of the command
-        :param repositories:
-        :return:
+        Initial command to perform. Gathers basic information from user and stores it
+        as AdditionalInfo object, accessible for descendants. Also, does very basic verification.
+        :param repositories: User's repositories
+        :return: Error code
         """
         if not repositories:
             print('No repositories')

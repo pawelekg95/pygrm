@@ -1,24 +1,25 @@
 """
-Copyright (c) 2022 Pawel Gmurczyk
-
 Stop runner command module
 """
 from typing import List
-from app.error.error import Error
+from app.terminal.commands.icommand import ICommand, Error, Repository
 from app.terminal.commands.additional_information import Type
-from app.terminal.commands.icommand import ICommand
 
 
 class StopCommand(ICommand):
     """
-    Stop runner command
+    Stop runner command.
     """
-    def perform(self, _, repositories: List[str] = None) -> Error:
+    def perform(self, _, repositories: List[Repository] = None) -> Error:
         """
-        Stop runner
+        Stops github runner.
+        For native (shell) runners stops service in systemd
+        using script provided from Github runner package.
+        Docker runners are being forbidden from auto launching on boot and stopped immediately.
+
         :param _: Unused
-        :param repositories:
-        :return:
+        :param repositories: User's repositories
+        :return: Error code
         """
         self.init_perform(repositories)
         return self.device_manager.stop_container(

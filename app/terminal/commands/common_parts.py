@@ -1,7 +1,5 @@
 """
-Copyright (c) 2022 Pawel Gmurczyk
-
-Base class of other command classes
+Provides functions to get some all-commands-wide information.
 """
 from getpass import getpass
 from app.terminal.commands.additional_information import AdditionalInfo, Destination, Type
@@ -10,9 +8,9 @@ from app.error.error import Error
 
 def base_information(token: AdditionalInfo = None) -> Error:
     """
-    Get repository and runner name from user
-    :param token:
-    :return:
+    Gets repository and runner name from user
+    :param token: AdditionalInfo object to be filled
+    :return: Error code
     """
     if not AdditionalInfo:
         return Error.EMPTY
@@ -25,9 +23,9 @@ def base_information(token: AdditionalInfo = None) -> Error:
 
 def destination_information(token: AdditionalInfo = None) -> Error:
     """
-    Get destination information from user
-    :param token:
-    :return:
+    Gets destination host information from user
+    :param token: AdditionalInfo object to be filled
+    :return: Error code
     """
     if not AdditionalInfo:
         return Error.EMPTY
@@ -49,9 +47,9 @@ def destination_information(token: AdditionalInfo = None) -> Error:
 
 def runner_type_information(token: AdditionalInfo = None) -> Error:
     """
-    Get runner type info from user
-    :param token:
-    :return:
+    Gets runner type information from user
+    :param token: AdditionalInfo object to be filled
+    :return: Error code
     """
     if not AdditionalInfo:
         return Error.EMPTY

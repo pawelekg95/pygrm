@@ -1,6 +1,4 @@
 """
-Copyright (c) 2022 Pawel Gmurczyk
-
 Remote device module
 """
 import os
@@ -12,16 +10,18 @@ from app.error.error import Error
 
 class RemoteClient:
     """
-    RemoteClient
+    Class representing remote device. Provides methods to manage docker containers / images
+    and github service on native system as systemd service
     """
     def __init__(self,
                  host: str = '',
                  user: str = '',
                  password: str = ''):
         """
-        Remote device abstraction
+        Constructor.
+        Creates ssh and scp connection with host. Raises socket.error in case of failure.
         :param host: Host address/name
-        :param user: User to log in
+        :param user: User to log in - must be sudoer
         :param password: User password
         """
         self.host = host
@@ -37,6 +37,11 @@ class RemoteClient:
         self.ssh_client.close()
 
     def __container_running(self, image_name: str = '') -> bool:
+        """
+        Checks if container based on provided image name is running
+        :param image_name: Image name of the container
+        :return: True if container is running, false otherwise
+        """
         _, stdout, _ = self.ssh_client.exec_command(
             'docker ps -q  --filter ancestor=' + image_name)
         if stdout.channel.recv_exit_status() != 0:
@@ -53,15 +58,23 @@ class RemoteClient:
                            additional_python_packages: str = '')\
             -> Tuple[Error, str, str]:
         """
-        Build docker image
-        :param docker_file_path:
-        :param github_user:
-        :param github_token:
-        :param repository_name:
-        :param image_name:
-        :param additional_linux_packages:
-        :param additional_python_packages:
-        :return:
+        Builds docker image.
+        Copies dockerfile from path provided as an argument and an entrypoint
+        from the same directory to the remote host's /tmp dir and builds docker image,
+        naming it from concatenation of repository and image name.
+        Github user name and token are required to build github runner inside the image.
+        Passes additional linux and python packages to docker build context.
+        :param docker_file_path: Local path to dockerfile.
+        Entrypoint must be within the same directory.
+        :param github_user: Github user name
+        :param github_token: Private token of the user
+        :param repository_name: Repository name to assign runner
+        :param image_name: Image name
+        :param additional_linux_packages: String with name of additional linux packages,
+        comma seperated.
+        :param additional_python_packages: String with name of additional python packages,
+        comma seperated.
+        :return: Error code, stdout and stderr strings
         """
         self.scp_client.put(files=os.path.dirname(docker_file_path) + '/entrypoint.sh',
                             remote_path='/tmp/entrypoint.sh')
@@ -82,7 +95,8 @@ class RemoteClient:
     def start_container(self,
                         image_name: str = '') -> Tuple[Error, str, str]:
         """
-        Start docker container upon image name
+        Starts docker container.
+
         :param image_name:
         :return:
         """

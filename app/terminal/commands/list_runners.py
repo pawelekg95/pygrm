@@ -1,12 +1,9 @@
 """
-Copyright (c) 2022 Pawel Gmurczyk
-
 List runner command module
 """
 from typing import List
 from app.github.client import Client as GithubClient
-from app.error.error import Error
-from app.terminal.commands.icommand import ICommand
+from app.terminal.commands.icommand import ICommand, Error, Repository
 
 
 class ListCommand(ICommand):
@@ -15,12 +12,14 @@ class ListCommand(ICommand):
     """
     @classmethod
     def perform(cls, github_client: GithubClient = None,
-                repositories: List[str] = None) -> Error:
+                repositories: List[Repository] = None) -> Error:
         """
-        Lists runners
-        :param github_client:
-        :param repositories:
-        :return:
+        Lists all runners assigned to a particular user's repository
+        and prints its' settings.
+
+        :param github_client: Valid GithubClient initialized with private token and user name.
+        :param repositories: User's repositories
+        :return: Error code
         """
         if not repositories:
             print('No repositories')
@@ -39,6 +38,5 @@ class ListCommand(ICommand):
                   ', architecture:', runner.arch, ', online:',
                   runner.online, ', repository:', runner.repository,
                   ', runs as docker service:', runner.as_docker,
-                  ', docker enabled:', runner.docker_enabled, ', container id:',
-                  runner.docker_container_id if runner.as_docker else 'None')
+                  ', docker enabled:', runner.docker_enabled)
         return Error.OK

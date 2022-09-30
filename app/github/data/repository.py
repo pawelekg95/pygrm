@@ -1,17 +1,15 @@
 """
-Copyright (c) 2022 Pawel Gmurczyk
-
 Repository module
 """
 
 
 class Repository:  # pylint: disable=too-few-public-methods
     """
-    Repository class
+    Repository
     """
     def __init__(self, name: str = ''):
         """
         Constructor
-        :param name:
+        :param name: Repository name
         """
         self.name = name

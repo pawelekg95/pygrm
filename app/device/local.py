@@ -1,6 +1,4 @@
 """
-Copyright (c) 2022 Pawel Gmurczyk
-
 Module that provides abstraction layer for local device
 """
 from typing import Tuple
@@ -9,7 +7,8 @@ from app.error.error import Error
 
 class LocalClient:
     """
-    Abstraction to represent local device
+    Class representing local device. Provides methods to manage docker containers / images
+    and github service on native system as systemd service
     """
 
     # @classmethod
@@ -25,7 +24,7 @@ class LocalClient:
     def build_docker_image(cls, *_) \
             -> Tuple[Error, str, str]:
         """
-        Build docker image
+        To be implemented
         :param _:
         :return:
         """
@@ -34,7 +33,7 @@ class LocalClient:
     @classmethod
     def start_container(cls, *_) -> Tuple[Error, str, str]:
         """
-        Start docker container from image name
+        To be implemented
         :param _:
         :return:
         """
@@ -43,7 +42,7 @@ class LocalClient:
     @classmethod
     def stop_container(cls, *_) -> Tuple[Error, str, str]:
         """
-        Stop container started upon image name
+        To be implemented
         :param _:
         :return:
         """
@@ -52,7 +51,7 @@ class LocalClient:
     @classmethod
     def delete_image(cls, *_) -> Tuple[Error, str, str]:
         """
-        Delete image
+        To be implemented
         :param _:
         :return:
         """
@@ -61,7 +60,7 @@ class LocalClient:
     @classmethod
     def install_github_service(cls, *_) -> Tuple[Error, str, str]:
         """
-        Install github runner as a service
+        To be implemented
         :param _:
         :return:
         """
@@ -70,7 +69,7 @@ class LocalClient:
     @classmethod
     def start_github_service(cls, *_) -> Tuple[Error, str, str]:
         """
-        Start github runner service
+        To be implemented
         :param _:
         :return:
         """
@@ -79,7 +78,7 @@ class LocalClient:
     @classmethod
     def stop_github_service(cls, *_) -> Tuple[Error, str, str]:
         """
-        Stop github runner service
+        To be implemented
         :param _:
         :return:
         """
