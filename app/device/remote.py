@@ -188,7 +188,8 @@ class RemoteClient:
         error_code, stdout, stderr = self.cpu_architecture()
         if error_code != Error.OK:
             return error_code, stdout, stderr
-        arch = architectures[stdout.strip('\n')]
+        architecture = stdout.strip('\n')
+        arch = architectures[architecture]
         _, stdout, stderr = self.ssh_client.exec_command(
             'sudo mkdir -p ' + dest_dir + '/' + runner_name)
         if stdout.channel.recv_exit_status() != 0:
