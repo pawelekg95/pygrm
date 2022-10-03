@@ -44,3 +44,10 @@ jobs:
       linter: shellcheck
     secrets: inherit
 
+  Dockerfiles_Hadolint:
+    uses: ./.github/workflows/quality_template.yml
+    with:
+      module_name: images/*.dockerfile
+      linter: hadolint
+    secrets: inherit
+

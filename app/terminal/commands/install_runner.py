@@ -54,11 +54,19 @@ class InstallCommand(ICommand):
                 self.additional_info.repository,
                 self.additional_info.repository + '_' + self.additional_info.runner)
         else:
+            error_code, cpu_arch, _ = self.device_manager.cpu_architecture()
+            if error_code != Error.OK:
+                return error_code
+            default_image = input('Use default image? [yes / no] ')
+            if default_image not in ['yes', 'no']:
+                return Error.VALUE_ERROR
             image_path = \
                 os.path.dirname(os.path.dirname(
                     os.path.dirname(
                         os.path.dirname(os.path.abspath(__file__))))) + \
-                '/images/github-runner.dockerfile'
+                '/images/github-runner_' + cpu_arch.strip('\n') + '.dockerfile' \
+                if default_image == 'yes' \
+                else input('Image path: ')
             error_code, stdout, stderr = self.device_manager.build_docker_image(
                 image_path,
                 github_client.user,
