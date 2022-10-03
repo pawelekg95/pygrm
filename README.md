@@ -1,4 +1,4 @@
-# pygrm
+# PyGRM
 ## Python Github Runners Manager
 ### Utility to manage github runners on local / remote hosts.
 Copyright (c) 2022 Pawel Gmurczyk
@@ -17,7 +17,7 @@ Documentation:
 
 # Introduction
 
-pyprm is command line application to manage Github runners.
+PyGRM is command line application to manage Github runners.
 While running takes input from the user and performs required commands.
 
 Implemented commands:
@@ -25,3 +25,7 @@ Implemented commands:
 * start runner
 * stop runner
 * remove runner
+
+# Installation
+1. 
+``
