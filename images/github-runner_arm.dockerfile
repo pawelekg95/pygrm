@@ -20,11 +20,11 @@ WORKDIR /root
 
 # Install base packages
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends build-essential=12.9 g++=4:10.2.1-1 llvm=1:11.0-51+nmu5 && \
-    apt-get install -y --no-install-recommends python3=3.9.2-3 python3-pip=20.3.4-4+deb11u1 shellcheck=0.7.1-1+deb11u1 git=1:2.30.2-1 make=4.3-4.1 && \
-    apt-get install -y --no-install-recommends clang-format=1:11.0-51+nmu5 clang-tidy=1:11.0-51+nmu5 wget=1.21-1+deb11u1 xz-utils=5.2.5-2.1~deb11u1 valgrind=1:3.16.1-1 && \
-    apt-get install -y --no-install-recommends lcov=1.14-2 libgpgme-dev=1.14.0-1 ca-certificates=20210119 curl=7.74.0-1.3+deb11u3 gnupg=2.2.27-2+deb11u2 && \
-    apt-get install -y --no-install-recommends lsb-release=11.1.0 dpkg=1.20.12 diffutils=1:3.7-5 cmake=3.18.4-2+deb11u1 && \
+    apt-get install -y --no-install-recommends build-essential=12.9 g++=4:10.2.1-1 llvm=1:11.0-51+nmu5 \
+    python3=3.9.2-3 python3-pip=20.3.4-4+deb11u1 shellcheck=0.7.1-1+deb11u1 git=1:2.30.2-1 make=4.3-4.1 \
+    clang-format=1:11.0-51+nmu5 clang-tidy=1:11.0-51+nmu5 wget=1.21-1+deb11u1 xz-utils=5.2.5-2.1~deb11u1 valgrind=1:3.16.1-1 \
+    lcov=1.14-2 libgpgme-dev=1.14.0-1 ca-certificates=20210119 curl=7.74.0-1.3+deb11u3 gnupg=2.2.27-2+deb11u2 \
+    lsb-release=11.1.0 dpkg=1.20.12 diffutils=1:3.7-5 cmake=3.18.4-2+deb11u1 && \
     apt-get autoremove -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*

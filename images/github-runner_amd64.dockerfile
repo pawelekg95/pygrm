@@ -25,11 +25,11 @@ WORKDIR /root
 
 # Install base packages
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends build-essential=12.8ubuntu1.1 g++=4:9.3.0-1ubuntu2 llvm=1:10.0-50~exp1 && \
-    apt-get install -y --no-install-recommends python3=3.8.2-0ubuntu2 python3-pip=20.0.2-5ubuntu1.6 shellcheck=0.7.0-2build2 git=1:2.25.1-1ubuntu3.5 make=4.2.1-1.2 && \
-    apt-get install -y --no-install-recommends clang-format=1:10.0-50~exp1 clang-tidy=1:10.0-50~exp1 wget=1.20.3-1ubuntu2 xz-utils=5.2.4-1ubuntu1.1 valgrind=1:3.15.0-1ubuntu9.1 && \
-    apt-get install -y --no-install-recommends lcov=1.14-2 libgpgme-dev=1.13.1-7ubuntu2 ca-certificates=20211016~20.04.1 curl=7.68.0-1ubuntu2.13 gnupg=2.2.19-3ubuntu2.2 && \
-    apt-get install -y --no-install-recommends lsb-release=11.1.0ubuntu2 dpkg=1.19.7ubuntu3.2 diffutils=1:3.7-3 && \
+    apt-get install -y --no-install-recommends build-essential=12.8ubuntu1.1 g++=4:9.3.0-1ubuntu2 llvm=1:10.0-50~exp1 \
+    python3=3.8.2-0ubuntu2 python3-pip=20.0.2-5ubuntu1.6 shellcheck=0.7.0-2build2 git=1:2.25.1-1ubuntu3.5 make=4.2.1-1.2 \
+    clang-format=1:10.0-50~exp1 clang-tidy=1:10.0-50~exp1 wget=1.20.3-1ubuntu2 xz-utils=5.2.4-1ubuntu1.1 valgrind=1:3.15.0-1ubuntu9.1 \
+    lcov=1.14-2 libgpgme-dev=1.13.1-7ubuntu2 ca-certificates=20211016~20.04.1 curl=7.68.0-1ubuntu2.13 gnupg=2.2.19-3ubuntu2.2 \
+    lsb-release=11.1.0ubuntu2 dpkg=1.19.7ubuntu3.2 diffutils=1:3.7-3 && \
     apt-get autoremove -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
