@@ -50,6 +50,15 @@ class RemoteClient:
             return False
         return stdout.read().decode("utf-8").strip('\n') != ''
 
+    def cpu_architecture(self) -> Tuple[Error, str, str]:
+        """
+        Fetches information about device CPU architecture.
+        :return: Error code, stdout and stderr strings
+        """
+        _, stdout, stderr = self.ssh_client.exec_command('dpkg --print-architecture')
+        return Error.OK if stdout.channel.recv_exit_status() == 0 else Error.SSH_ERROR, \
+            stdout.read().decode("utf-8"), stderr.read().decode("utf-8")
+
     def build_docker_image(self,  # pylint: disable=too-many-arguments
                            docker_file_path: str = '',
                            github_user: str = '',
@@ -181,10 +190,11 @@ class RemoteClient:
             "arm64": "arm64",
             "arm": "arm"
         }
-        _, stdout, stderr = self.ssh_client.exec_command('dpkg --print-architecture')
-        if stdout.channel.recv_exit_status() != 0:
-            return Error.SSH_ERROR, stdout.read().decode("utf-8"), stderr.read().decode("utf-8")
-        arch = architectures[stdout.read().decode("utf-8").strip('\n')]
+        error_code, stdout, stderr = self.cpu_architecture()
+        if error_code != Error.OK:
+            return error_code, stdout, stderr
+        architecture = stdout.strip('\n')
+        arch = architectures[architecture]
         _, stdout, stderr = self.ssh_client.exec_command(
             'sudo mkdir -p ' + dest_dir + '/' + runner_name)
         if stdout.channel.recv_exit_status() != 0:
