@@ -105,17 +105,22 @@ class RemoteClient:
             stdout.read().decode("utf-8"), stderr.read().decode("utf-8")
 
     def start_container(self,
-                        image_name: str = '') -> Tuple[Error, str, str]:
+                        image_name: str = '',
+                        docker_inside_docker: bool = False) -> Tuple[Error, str, str]:
         """
         Starts docker container.
         Container is set to be launched on boot and is started immediately.
 
         :param image_name: Image name on which container has to be created.
+        :param docker_inside_docker: Mount docker socket in new docker container
+        to allow using docker inside
         :return: Error code, stdout and stderr strings
         """
         if self.__container_running(image_name):
             return Error.ALREADY, '', ''
         run_command = 'sudo docker run -d --restart unless-stopped --network host '
+        if docker_inside_docker:
+            run_command += '-v /var/run/docker.sock:/var/run/docker.sock '
         _, stdout, stderr = self.ssh_client.exec_command(run_command + image_name)
         return Error.OK if stdout.channel.recv_exit_status() == 0 else Error.SSH_ERROR, \
             stdout.read().decode("utf-8"), stderr.read().decode("utf-8")

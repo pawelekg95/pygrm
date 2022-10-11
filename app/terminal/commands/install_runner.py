@@ -83,16 +83,4 @@ class InstallCommand(ICommand):
                 self.additional_info.repository,
                 self.additional_info.repository + '_' + self.additional_info.runner)
         print(stdout, '\n', stderr)
-        if error_code != Error.OK:
-            return error_code
-        launch = input('Runner installed correctly.'
-                       'Do you want to launch it immediately? [yes / no] ')
-        if launch not in ['yes', 'no']:
-            return Error.VALUE_ERROR
-        if launch == 'no':
-            return Error.OK
-        return self.device_manager.start_container(
-            self.additional_info.repository + '_' + self.additional_info.runner)[0]\
-            if self.additional_info.runner_type == Type.DOCKER\
-            else self.device_manager.start_github_service(
-                self.additional_info.repository + '_' + self.additional_info.runner)[0]
+        return error_code

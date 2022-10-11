@@ -23,8 +23,12 @@ class StartCommand(ICommand):
         :return: Error code
         """
         self.init_perform(repositories)
+        docker_inside_docker = 'no'
+        if self.additional_info.runner_type == Type.DOCKER:
+            docker_inside_docker = input('Allow docker inside container? [yes / no] ').lower()
         return self.device_manager.start_container(
-            self.additional_info.repository + '_' + self.additional_info.runner)[0] \
+            self.additional_info.repository + '_' + self.additional_info.runner,
+            docker_inside_docker == 'yes')[0] \
             if self.additional_info.runner_type == Type.DOCKER \
             else self.device_manager.start_github_service(
             self.additional_info.repository + '_' + self.additional_info.runner)[0]
