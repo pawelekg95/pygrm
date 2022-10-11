@@ -39,7 +39,7 @@ RUN curl -o "cmake_v${CMAKE_VER}" -L "${CMAKE_URL}" && \
     mkdir -p "/opt/cmake/${CMAKE_VER}" && \
     tar -xf "$(basename cmake_v${CMAKE_VER})" -C "/opt/cmake/${CMAKE_VER}" --strip-components=1 && \
     rm "$(basename cmake_v${CMAKE_VER})" && \
-    ln -s "/opt/cmake/${CMAKE_VER}/bin/*" /usr/bin/ && \
+    ln -s /opt/cmake/"${CMAKE_VER}"/bin/* /usr/bin/ && \
     apt-get autoremove -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
