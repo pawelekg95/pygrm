@@ -37,7 +37,7 @@ RUN apt-get update && \
 # Download run-clang-format wrapper
 RUN git clone https://github.com/Sarcasm/run-clang-format.git
 WORKDIR /root/run-clang-format
-RUN git checkout 39081c9c42768ab5e8321127a7494ad1647c6a2f run-clang-format && \
+RUN git checkout 39081c9c42768ab5e8321127a7494ad1647c6a2f . && \
     ln -s /root/run-clang-format/run-clang-format.py /usr/bin/
 
 WORKDIR /root
