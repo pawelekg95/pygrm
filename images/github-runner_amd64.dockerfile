@@ -35,10 +35,10 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Download run-clang-format wrapper
-RUN git clone https://github.com/Sarcasm/run-clang-format.git && \
-    cd run-clang-format && \
-    git checkout 39081c9c42768ab5e8321127a7494ad1647c6a2f . && \
-    ln -s ./run-clang-format.py /usr/bin/
+RUN git clone https://github.com/Sarcasm/run-clang-format.git
+WORKDIR /root/run-clang-format
+RUN git checkout 39081c9c42768ab5e8321127a7494ad1647c6a2f run-clang-format && \
+    ln -s /root/run-clang-format/run-clang-format.py /usr/bin/
 
 # Install custom CMake version
 RUN curl -o "cmake_v${CMAKE_VER}" -L "${CMAKE_URL}" && \
