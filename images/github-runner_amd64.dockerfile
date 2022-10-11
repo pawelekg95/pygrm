@@ -40,6 +40,8 @@ WORKDIR /root/run-clang-format
 RUN git checkout 39081c9c42768ab5e8321127a7494ad1647c6a2f run-clang-format && \
     ln -s /root/run-clang-format/run-clang-format.py /usr/bin/
 
+WORKDIR /root
+
 # Install custom CMake version
 RUN curl -o "cmake_v${CMAKE_VER}" -L "${CMAKE_URL}" && \
     mkdir -p "/opt/cmake/${CMAKE_VER}" && \
