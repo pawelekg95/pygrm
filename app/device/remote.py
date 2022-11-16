@@ -50,6 +50,19 @@ class RemoteClient:
             return False
         return stdout.read().decode("utf-8").strip('\n') != ''
 
+    def service_installed(self, repository: str = '', runner_name: str = ''):
+        """
+
+        :param repository:
+        :param runner_name:
+        :return:
+        """
+        _, stdout, stderr = self.ssh_client.exec_command('if [ ! -f /etc/systemd/system/actions.runner.' +
+                                                         self.user + '-' + repository + '.' + runner_name +
+                                                         '.service ]; then echo 123; else echo 0; fi')
+        return Error.OK if stdout.channel.recv_exit_status() in [0, 123] else Error.SSH_ERROR, \
+            stdout.read().decode("utf-8"), stderr.read().decode("utf-8")
+
     def cpu_architecture(self) -> Tuple[Error, str, str]:
         """
         Fetches information about device CPU architecture.
@@ -210,7 +223,7 @@ class RemoteClient:
             return Error.SSH_ERROR, stdout.read().decode("utf-8"), stderr.read().decode("utf-8")
         _, stdout, stderr = self.ssh_client.exec_command(
             'sudo tar xzf ' + dest_dir + '/' + runner_name + '/actions-runner-linux-' +
-            arch + '-2.296.1.tar.gz -C ' + dest_dir, get_pty=True)
+            arch + '-2.296.1.tar.gz -C ' + dest_dir + '/' + runner_name, get_pty=True)
         for line in iter(stdout.readline, ""):
             print(line, end="")
         if stdout.channel.recv_exit_status() != 0:
@@ -223,23 +236,24 @@ class RemoteClient:
             return Error.SSH_ERROR, stdout.read().decode("utf-8"), stderr.read().decode("utf-8")
         _, stdout, stderr = self.ssh_client.exec_command(
             'sudo RUNNER_ALLOW_RUNASROOT="1" ' + dest_dir + '/' +
-            runner_name + './config.sh --unattended --url "https://github.com/' +
+            runner_name + '/config.sh --unattended --url "https://github.com/' +
             github_user + '/' + repository_name + '" --token "' +
             github_token + '" --name "' + runner_name +
             '" --labels "shell_service"', get_pty=True)
         for line in iter(stdout.readline, ""):
             print(line, end="")
         _, stdout, stderr = self.ssh_client.exec_command(
-            'sudo RUNNER_ALLOW_RUNASROOT="1" ' + dest_dir + '/' +
-            runner_name + './svc.sh install', get_pty=True)
+            'cd ' + dest_dir + '/' + runner_name + '; sudo RUNNER_ALLOW_RUNASROOT="1" ' + dest_dir + '/' +
+            runner_name + '/svc.sh install', get_pty=True)
         for line in iter(stdout.readline, ""):
             print(line, end="")
         return Error.OK if stdout.channel.recv_exit_status() == 0 else Error.SSH_ERROR, \
             stdout.read().decode("utf-8"), stderr.read().decode("utf-8")
 
     def start_github_service(self,
-                             runner_name: str = '',
-                             service_dir: str = '/home/github-runner') -> Tuple[Error, str, str]:
+                             github_user: str = '',
+                             repository: str = '',
+                             runner_name: str = '') -> Tuple[Error, str, str]:
         """
         Starts github runner service.
 
@@ -249,14 +263,17 @@ class RemoteClient:
         :param service_dir: Path where github runner is installed.
         :return: Error code, stdout and stderr strings
         """
-        _, stdout, stderr = self.ssh_client.exec_command(
-            'sudo ' + service_dir + '/' + runner_name + '/svc.sh start')
+        _, stdout, stderr = self.ssh_client.exec_command('sudo service actions.runner.' +
+                                                         github_user + '-' + repository + '.' +
+                                                         repository + '_' + runner_name + ' start', get_pty=True)
+        for line in iter(stdout.readline, ""):
+            print(line, end="")
         return Error.OK if stdout.channel.recv_exit_status() == 0 else Error.SSH_ERROR, \
             stdout.read().decode("utf-8"), stderr.read().decode("utf-8")
 
     def stop_github_service(self,
-                            runner_name: str = '',
-                            service_dir: str = '/home/github-runner') -> Tuple[Error, str, str]:
+                            repository: str = '',
+                            runner_name: str = '') -> Tuple[Error, str, str]:
         """
         Stops github runner service.
 
@@ -266,7 +283,34 @@ class RemoteClient:
         :param service_dir: Path where github runner is installed.
         :return: Error code, stdout and stderr strings
         """
-        _, stdout, stderr = self.ssh_client.exec_command(
-            'sudo ' + service_dir + '/' + runner_name + '/svc.sh stop')
+        _, stdout, stderr = self.ssh_client.exec_command('sudo systemctl stop actions.runner.' +
+                                                         self.user + '-' + repository + '.' +
+                                                         runner_name + '.service', get_pty=True)
+        for line in iter(stdout.readline, ""):
+            print(line, end="")
+        return Error.OK if stdout.channel.recv_exit_status() == 0 else Error.SSH_ERROR, \
+            stdout.read().decode("utf-8"), stderr.read().decode("utf-8")
+
+    def uninstall_github_service(self,
+                                 repository: str = '',
+                                 runner_name: str = '') -> Tuple[Error, str, str]:
+        """
+        Stops github runner service.
+
+        Stops github runner service in systemd.
+
+        :param runner_name: Runner name.
+        :param service_dir: Path where github runner is installed.
+        :return: Error code, stdout and stderr strings
+        """
+        error_code, stdout, stderr = self.stop_github_service(repository, runner_name)
+        if error_code != Error.OK:
+            return error_code, stdout, stderr
+        _, stdout, stderr = self.ssh_client.exec_command('sudo rm /etc/systemd/system/actions.runner.' +
+                                                         self.user + '-' + repository + '.' +
+                                                         runner_name + '.service')
+        if stdout.channel.recv_exit_status() != 0:
+            return Error.SSH_ERROR, stdout.read().decode("utf-8"), stderr.read().decode("utf-8")
+        _, stdout, stderr = self.ssh_client.exec_command('sudo systemctl daemon-reload')
         return Error.OK if stdout.channel.recv_exit_status() == 0 else Error.SSH_ERROR, \
             stdout.read().decode("utf-8"), stderr.read().decode("utf-8")

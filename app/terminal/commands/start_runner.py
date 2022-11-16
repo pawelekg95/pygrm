@@ -30,5 +30,5 @@ class StartCommand(ICommand):
             self.additional_info.repository + '_' + self.additional_info.runner,
             docker_inside_docker == 'yes')[0] \
             if self.additional_info.runner_type == Type.DOCKER \
-            else self.device_manager.start_github_service(
-            self.additional_info.repository + '_' + self.additional_info.runner)[0]
+            else self.device_manager.start_github_service(self.additional_info.github_user,
+                    self.additional_info.repository, self.additional_info.runner)[0]

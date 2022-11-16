@@ -3,17 +3,26 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-# Version >= 3.21 is welcome due to presence of presets
-ARG CMAKE_VER=3.23.2
-ARG CMAKE_URL="https://github.com/Kitware/CMake/releases/download/v${CMAKE_VER}/cmake-${CMAKE_VER}-linux-aarch64.tar.gz"
-ARG GITHUB_RUNNER_URL="https://github.com/actions/runner/releases/download/v2.296.1/actions-runner-linux-arm64-2.296.1.tar.gz"
-ARG HADOLINT_URL="https://github.com/hadolint/hadolint/releases/download/v2.10.0/hadolint-Linux-arm64"
-
 # Required arguments
 ARG REPOSITORY
 ARG GITHUB_TOKEN
 ARG GITHUB_USER
 ARG RUNNER_NAME
+ARG ARCH
+
+# Place holder for architecture maps
+ARG CMAKE_ARCHS
+ARG GITHUB_RUNNER_ARCHS
+ARG HADOLINT_ARCHS
+
+# Initialize args
+RUN declare -A CMAKE_ARCHS=( ["amd64"]="x86_64" ["arm64"]="aarch64" )
+RUN declare -A GITHUB_RUNNER_ARCHS=( ["amd64"]="x64" ["arm64"]="arm64" )
+RUN declare -A HADOLINT_ARCHS=( ["amd64"]="x86_64" ["arm64"]="arm64" )
+ARG CMAKE_VER=3.23.2
+ARG CMAKE_URL="https://github.com/Kitware/CMake/releases/download/v${CMAKE_ARCHS[${ARCH}]}/cmake-${CMAKE_ARCHS[${ARCH}]}-linux-aarch64.tar.gz"
+ARG GITHUB_RUNNER_URL="https://github.com/actions/runner/releases/download/v2.296.1/actions-runner-linux-${GITHUB_RUNNER_ARCHS[${ARCH}]}-2.296.1.tar.gz"
+ARG HADOLINT_URL="https://github.com/hadolint/hadolint/releases/download/v2.10.0/hadolint-Linux-${HADOLINT_ARCHS[${ARCH}]}"
 
 # Optional arguments
 ARG ADDITIONAL_PACKAGES
@@ -30,6 +39,8 @@ RUN apt-get update && \
     clang-format=1:10.0-50~exp1 clang-tidy=1:10.0-50~exp1 wget=1.20.3-1ubuntu2 xz-utils=5.2.4-1ubuntu1.1 valgrind=1:3.15.0-1ubuntu9.1 \
     lcov=1.14-2 libgpgme-dev=1.13.1-7ubuntu2 ca-certificates=20211016~20.04.1 curl=7.68.0-1ubuntu2.13 gnupg=2.2.19-3ubuntu2.2 \
     lsb-release=11.1.0ubuntu2 dpkg=1.19.7ubuntu3.2 diffutils=1:3.7-3 clang-tools=1:10.0-50~exp1 python-is-python2=2.7.17-4 && \
+    ln -s /usr/bin/clang++-10 /usr/bin/clang++ && \
+    ln -s /usr/bin/clang-10 /usr/bin/clang && \
     apt-get autoremove -y && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -67,6 +78,8 @@ RUN ./bin/installdependencies.sh && \
     RUNNER_ALLOW_RUNASROOT="1" /root/actions-runner/config.sh --unattended \
     --url "https://github.com/${GITHUB_USER}/${REPOSITORY}" --token "${GITHUB_TOKEN}" --name "${RUNNER_NAME}" --labels "docker_service"
 
+WORKDIR /root
+
 # Import docker repository
 RUN mkdir -p /etc/apt/keyrings && \
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg && \
@@ -100,6 +113,15 @@ RUN pip3 --no-cache-dir install requests==2.28.1 telnetlib3==1.0.4 pyserial==3.5
 RUN IFS=',' read -ra PACKAGES <<< "${ADDITIONAL_PYTHON_PACKAGES}" && \
     if (( ${#PACKAGES[@]} != 0 )); then pip3 --no-cache-dir install "${PACKAGES[@]}"; fi
 
+# Install doxygen
+RUN curl https://www.doxygen.nl/files/doxygen-1.9.5.src.tar.gz -o doxygen-1.9.5.src.tar.gz && \
+    tar -xvzf ./doxygen-1.9.5.src.tar.gz && \
+    cd doxygen-1.9.5 && \
+    mkdir build && \
+    cd build && \
+    cmake -G "Unix Makefiles" .. && \
+    make && \
+    make install
 
 COPY entrypoint.sh /root/
 RUN chmod 775 /root/entrypoint.sh

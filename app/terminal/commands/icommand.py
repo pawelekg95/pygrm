@@ -15,11 +15,12 @@ class ICommand:  # pylint: disable=too-few-public-methods
     Base class for other commands.
     Takes base input from user, such as destination host and runner type.
     """
-    def __init__(self):
+    def __init__(self, github_user: str = ''):
         """
         Constructor
         """
         self.additional_info = AdditionalInfo()
+        self.additional_info.github_user = github_user
         self.device_manager = None
 
     def init_perform(self, repositories: List[Repository] = None) -> Error:
